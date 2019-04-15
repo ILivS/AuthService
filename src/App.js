@@ -3,6 +3,7 @@ const helmet = require('helmet')
 const logger = require('morgan')
 const cors = require('cors')
 const passport = require('passport')
+require('./middleware/passport')
 require('./db/mongoose')
 require('dotenv').config()
 
@@ -10,6 +11,7 @@ const app = express()
 const LoginRoute = require('./routes/login')
 const LogoutRoute = require('./routes/logout')
 const SignupRoute = require('./routes/signup')
+const UserRoute = require('./routes/user')
 
 app.use(express.json())
 app.use(cors())
@@ -19,6 +21,7 @@ app.use(passport.initialize())
 app.use('/api/user', LoginRoute)
 app.use('/api/user', SignupRoute)
 app.use('/api/user', LogoutRoute)
+app.use('/api/user', UserRoute)
 
 app.use((req, res, next) => {
     const error = new Error('Page not found')

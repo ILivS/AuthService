@@ -1,13 +1,27 @@
 const express = require('express')
 const User = require('../models/user')
 const router = new express.Router()
+const passport = require('passport')
+
+/*
+router.post(
+    '/signup',
+    passport.authenticate('signup', {session: false}),
+    async (req, res, next) => {
+        res.json({
+            message: 'Signup successful',
+            user: req.user
+        })
+    }
+)
+*/
 
 router.post('/signup', async (req, res) => {
     try {
         const items = ['username', 'password', 'email']
         const emptyString = []
         const info = Object.assign({}, req.body)
-        const {username, email, password} = info
+        const {username, email} = info
         items.forEach(item => {
             if (!info[item]) emptyString.push(item)
         })
@@ -28,7 +42,7 @@ router.post('/signup', async (req, res) => {
         })
 
         if (users.includes(username) || emails.includes(email)) {
-           return res.status(400).send({
+            return res.status(400).send({
                 success: false,
                 message: 'Username or Email already existed'
             })
