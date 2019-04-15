@@ -3,7 +3,7 @@ const User = require('../models/user')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 
-router.post('/login',auth, async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const {username, password} = req.body
         const user = await User.confirmCredentials(username, password)
