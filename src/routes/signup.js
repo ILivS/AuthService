@@ -2,19 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const router = new express.Router()
 const passport = require('passport')
-
-/*
-router.post(
-    '/signup',
-    passport.authenticate('signup', {session: false}),
-    async (req, res, next) => {
-        res.json({
-            message: 'Signup successful',
-            user: req.user
-        })
-    }
-)
-*/
+const {sendSuccess, sendError} = require('../utils/sendResponse')
 
 router.post('/signup', async (req, res) => {
     try {
@@ -26,11 +14,10 @@ router.post('/signup', async (req, res) => {
             if (!info[item]) emptyString.push(item)
         })
 
-        if (emptyString.length)
-            return res.status(400).send({
-                success: false,
-                message: `${emptyString.join(', ')} cannot be empty`
-            })
+        if (emptyString.length) {
+            const message = `${emptyString.join(', ')} cannot be empty`
+            return sendError(res, message)
+        }
 
         const user = new User(info)
         const allUsers = await User.find({}).select('email username')
@@ -42,13 +29,11 @@ router.post('/signup', async (req, res) => {
         })
 
         if (users.includes(username) || emails.includes(email)) {
-            return res.status(400).send({
-                success: false,
-                message: 'Username or Email already existed'
-            })
+            const  message = 'Username or Email already existed'
+           return sendError(res,message)
         }
         await user.save()
-        res.send({success: true, data: user})
+        return sendSuccess(res, user)
     } catch (e) {
         res.status(400).send(e)
     }

@@ -1,12 +1,11 @@
 const express = require('express')
-const auth = require('../middleware/auth')
 const router = new express.Router()
 
-router.post('/logout',auth, async (req, res) => {
+router.post('/logout', async (req, res) => {
     try {
-        res.send({success: true, data: user})
+        res.send({success: true, data: true})
     } catch (e) {
-        res.status(400).send()
+        res.status(400).send({e})
     }
 })
 
