@@ -1,6 +1,9 @@
 const passport = require('passport')
 const localStrategy = require('passport-local').Strategy
 const User = require('../models/user')
+const UserDetail = require('../models/userDetail')
+const GoogleStrategy = require('passport-google-oauth20').Strategy
+
 require('dotenv').config()
 
 passport.use(
@@ -37,7 +40,7 @@ passport.use(
                         message: 'Wrong username or password!'
                     })
                 }
-                return done(null, user, {message:''})
+                return done(null, user, {message: ''})
             } catch (error) {
                 done(error, null, {message: 'Unable to logged in!'})
             }
@@ -61,7 +64,45 @@ passport.use(
                 if (!user) return done(null, false, {message: 'User not found'})
                 return done(null, user, {message: ''})
             } catch (error) {
-                return done(error, null , {message: 'Failed to parsed token!'})
+                return done(error, null, {message: 'Failed to parsed token!'})
+            }
+        }
+    )
+)
+
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOOGLE_CLIENT_SECRET,
+            callbackURL: '/auth/google/callback'
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                const {sub, name, given_name, picture, email} = profile._json
+                const UserExisted = await User.findOne({email})
+                if (UserExisted) {
+                    return done(null, UserExisted, {message: ''})
+                }
+                const userDetail = new UserDetail({
+                    googleID: sub,
+                    displayName: name,
+                    givenName: given_name,
+                    picture: picture
+                })
+                const user = new User({
+                    username: name,
+                    email: email,
+                    userDetail: userDetail._id
+                })
+                await userDetail.save()
+                await user.save()
+                // const res = await User.findOne({_id: user._id})
+                //     .populate('userDetail')
+                //     .exec()
+                return done(null, user, {message: ''})
+            } catch (error) {
+                return done(error, null, {message: 'Unknown Error!'})
             }
         }
     )

@@ -21,13 +21,11 @@ router.get('/user', async (req, res, next) => {
     passport.authenticate('jwt', {session: false}, async (err, user, info) => {
         try {
             const {message} = info
-            if (message) {
+            if (err ||message || !user) {
                 return sendError(res, message)
             }
-            if (err || !user) {
-                return sendError(res, err)
-            }
-            return sendSuccess(res, user)
+            const data = {user}
+            return sendSuccess(res, data)
         } catch (e) {
             return sendError(res, e)
         }

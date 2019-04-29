@@ -56,12 +56,12 @@ metadata:
      #which is configured with a self-signed certificate, and redirects http to https
      #nginx.ingress.kubernetes.io/rewrite-target: /$1
      nginx.ingress.kubernetes.io/configuration-snippet: |
-      rewrite /api/auth/(.*) /$1 break;
+      rewrite /api/(.*) /$1 break;
 spec:
   rules:
    - http:
       paths:
-       - path: /api/auth/
+       - path: /api/
          backend:
           serviceName: authservicesvc
           servicePort: 80

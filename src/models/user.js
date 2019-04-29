@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 require('dotenv').config()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const validator = require('validator')
 
 const userSchema = new mongoose.Schema(
     {
@@ -10,11 +11,10 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             trim: true,
-            lowercase: true
         },
         password: {
             type: String,
-            required: true,
+            // required: true,
             minlength: 8,
             validate(value) {
                 if (value.length < 8) {
@@ -26,7 +26,16 @@ const userSchema = new mongoose.Schema(
         },
         email: {
             type: String,
-            required: true
+            required: true,
+            validate(value) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Email is invalid')
+                }
+            }
+        },
+        userDetail: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'userDetail'
         }
     },
     {timestamps: true}
@@ -42,7 +51,7 @@ userSchema.methods.toJSON = function() {
     return userObject
 }
 
-userSchema.methods.isValidPassword = async function (password)  {
+userSchema.methods.isValidPassword = async function(password) {
     const user = this
     const isValidPassword = await bcrypt.compare(password, user.password)
     if (!isValidPassword) return false

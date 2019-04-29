@@ -14,15 +14,27 @@ const LoginRoute = require('./routes/login')
 const LogoutRoute = require('./routes/logout')
 const SignupRoute = require('./routes/signup')
 const UserRoute = require('./routes/user')
+const GoogleRoute = require('./routes/googleAuth')
 const GeneralRoute = require('./routes/general')
 
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept'
+    )
+    next()
+})
+
+
+app.use(passport.initialize())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(express.json())
 app.use(cors())
 app.use(logger('dev'))
 app.use(helmet())
-app.use(passport.initialize())
+app.use('/', GoogleRoute)
 app.use('/', LoginRoute)
 app.use('/', SignupRoute)
 app.use('/', LogoutRoute)
