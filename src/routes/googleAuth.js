@@ -25,8 +25,8 @@ router.get('/auth/google/callback', (req, res, next) => {
                         : `http://localhost:3000/auth/google/callback/success?token=${token}`
                 const url =
                     process.env.NODE_ENV === 'production'
-                        ? `/auth/google/callback/success?token=${token}`
-                        : devURL
+                        ? devURL
+                        : `/auth/google/callback/success?token=${token}`
                 res.redirect(url)
             } catch (error) {
                 return sendError(res, error)
