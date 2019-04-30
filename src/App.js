@@ -15,7 +15,6 @@ const LogoutRoute = require('./routes/logout')
 const SignupRoute = require('./routes/signup')
 const UserRoute = require('./routes/user')
 const GoogleRoute = require('./routes/googleAuth')
-const GeneralRoute = require('./routes/general')
 
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*')
@@ -25,7 +24,6 @@ app.use(function(req, res, next) {
     )
     next()
 })
-
 
 app.use(passport.initialize())
 app.use(bodyParser.urlencoded({extended: false}))
@@ -39,7 +37,14 @@ app.use('/', LoginRoute)
 app.use('/', SignupRoute)
 app.use('/', LogoutRoute)
 app.use('/', UserRoute)
-app.use('/', GeneralRoute)
+
+app.get('/', (req, res, next) => {
+    try {
+        res.end('Homepage')
+    } catch (e) {
+        res.status(400).send()
+    }
+})
 
 app.use((req, res, next) => {
     const error = new Error('Page not found')
