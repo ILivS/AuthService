@@ -15,8 +15,11 @@ router.get('/auth/google/callback', (req, res, next) => {
         async (err, user, info) => {
             try {
                 const {message} = info
-                if (err || message || !user) {
+                if (message) {
                     return sendError(res, message)
+                }
+                if (err ||!user) {
+                    return sendError(res, err)
                 }
                 const token = await user.generateToken()
                 const devURL =
