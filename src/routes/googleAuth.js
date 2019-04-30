@@ -18,7 +18,7 @@ router.get('/auth/google/callback', (req, res, next) => {
                 if (message) {
                     return sendError(res, message)
                 }
-                if (err ||!user) {
+                if (err || !user) {
                     return sendError(res, err)
                 }
                 const token = await user.generateToken()
@@ -28,8 +28,8 @@ router.get('/auth/google/callback', (req, res, next) => {
                         : `http://localhost:3000/auth/google/callback/success?token=${token}`
                 const url =
                     process.env.NODE_ENV === 'production'
-                        ? devURL
-                        : `/auth/google/callback/success?token=${token}`
+                        ? `/auth/google/callback/success?token=${token}`
+                        : devURL
                 res.redirect(url)
             } catch (error) {
                 return sendError(res, error)
