@@ -7,8 +7,11 @@ router.post('/login', async (req, res, next) => {
     passport.authenticate('login', async (err, user, info) => {
         try {
             const {message} = info
-            if (err || message || !user) {
+            if (message) {
                 return sendError(res, message)
+            }
+            if (err || !user) {
+                return sendError(res, err)
             }
             req.login(user, {session: false}, async error => {
                 if (error) return sendError(res, error)
@@ -20,7 +23,6 @@ router.post('/login', async (req, res, next) => {
             return sendError(res, error)
         }
     })(req, res, next)
-}) 
-
+})
 
 module.exports = router

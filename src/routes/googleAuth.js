@@ -24,7 +24,7 @@ router.get('/auth/google/callback', (req, res, next) => {
                 const token = await user.generateToken()
                 const devURL =
                     process.env.ENV === 'heroku'
-                        ? `https://clientlivs.herokuapp.com/auth/google/callback/success?token=${token}`
+                        ? `https://sitib-vn.netlify.com/auth/google/callback/success?token=${token}`
                         : `http://localhost:3000/auth/google/callback/success?token=${token}`
                 const url =
                     process.env.NODE_ENV === 'production'
