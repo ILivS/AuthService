@@ -5,7 +5,7 @@ const {sendSuccess, sendError} = require('../utils/sendResponse')
 require('dotenv').config()
 
 router.get(
-    '/auth/google',
+    '/google',
     passport.authenticate('google', {scope: ['profile', 'email']})
 )
 router.get('/auth/google/callback', (req, res, next) => {
@@ -22,14 +22,19 @@ router.get('/auth/google/callback', (req, res, next) => {
                     return sendError(res, err)
                 }
                 const token = await user.generateToken()
-                const devURL =
+                /*   const devURL =
                     process.env.ENV === 'heroku'
                         ? `https://sitib-vn.netlify.com/auth/google/callback/success?token=${token}`
                         : `http://localhost:3000/auth/google/callback/success?token=${token}`
                 const url =
                     process.env.NODE_ENV === 'production'
                         ? `/auth/google/callback/success?token=${token}`
-                        : devURL
+                        : devURL */
+                const url =
+                    process.env.NODE_ENV === 'development'
+                        ? `http://localhost:3000/auth/google/callback/success?token=${token}`
+                        : `/auth/google/callback/success?token=${token}`
+                console.log(url)
                 res.redirect(url)
             } catch (error) {
                 return sendError(res, error)
