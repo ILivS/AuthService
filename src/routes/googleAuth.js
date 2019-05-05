@@ -33,8 +33,9 @@ router.get('/auth/google/callback', (req, res, next) => {
                 const url =
                     process.env.NODE_ENV === 'development'
                         ? `http://localhost:3000/auth/google/callback/success?token=${token}`
-                        : `/auth/google/callback/success?token=${token}`
-                console.log(url)
+                       // : `/auth/google/callback/success?token=${token}`
+                       : `https://sitib-vn.netlify.com/auth/google/callback/success?token=${token}`
+              
                 res.redirect(url)
             } catch (error) {
                 return sendError(res, error)
