@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
+
 const router = new express.Router()
-const passport = require('passport')
 const {sendSuccess, sendError} = require('../utils/sendResponse')
 
 router.post('/signup', async (req, res) => {
@@ -21,16 +21,12 @@ router.post('/signup', async (req, res) => {
 
         const user = new User(info)
         const allUsers = await User.find({}).select('email username')
-        const users = allUsers.map(item => {
-            return item.username
-        })
-        const emails = allUsers.map(item => {
-            return item.email
-        })
+        const users = allUsers.map(item => item.username)
+        const emails = allUsers.map(item => item.email)
 
         if (users.includes(username) || emails.includes(email)) {
-            const  message = 'Username or Email already existed'
-           return sendError(res,message)
+            const message = 'Username or Email already existed'
+            return sendError(res, message)
         }
         await user.save()
         return sendSuccess(res, user)

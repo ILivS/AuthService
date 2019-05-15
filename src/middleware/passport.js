@@ -1,8 +1,10 @@
 const passport = require('passport')
+const JWTstrategy = require('passport-jwt').Strategy
+const ExtractJWT = require('passport-jwt').ExtractJwt
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 const localStrategy = require('passport-local').Strategy
 const User = require('../models/user')
 const UserDetail = require('../models/userDetail')
-const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 require('dotenv').config()
 
@@ -11,7 +13,7 @@ passport.use(
     new localStrategy(
         {
             usernameField: 'username',
-            passwordField: 'password'
+            passwordField: 'password',
         },
         async (username, password, done) => {
             try {
@@ -29,7 +31,7 @@ passport.use(
     new localStrategy(
         {
             usernameField: 'username',
-            passwordField: 'password'
+            passwordField: 'password',
         },
         async (username, password, done) => {
             try {
@@ -37,7 +39,7 @@ passport.use(
                 const validate = await user.isValidPassword(password)
                 if (!user || !validate) {
                     return done(null, false, {
-                        message: 'Wrong username or password!'
+                        message: 'Wrong username or password!',
                     })
                 }
                 return done(null, user, {message: ''})
@@ -48,15 +50,12 @@ passport.use(
     )
 )
 
-const JWTstrategy = require('passport-jwt').Strategy
-const ExtractJWT = require('passport-jwt').ExtractJwt
-
 passport.use(
     'jwt',
     new JWTstrategy(
         {
             secretOrKey: process.env.JWT_SECRET,
-            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
+            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         },
         async (token, done) => {
             try {
@@ -76,7 +75,7 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOOGLE_CLIENT_SECRET,
             callbackURL: '/auth/google/callback',
-            proxy: true
+            proxy: true,
         },
         async (accessToken, refreshToken, profile, done) => {
             try {
@@ -89,18 +88,15 @@ passport.use(
                     googleID: sub,
                     displayName: name,
                     givenName: given_name,
-                    picture: picture
+                    picture,
                 })
                 const user = new User({
                     username: name,
-                    email: email,
-                    userDetail: userDetail._id
+                    email,
+                    userDetail: userDetail._id,
                 })
                 await userDetail.save()
                 await user.save()
-                // const res = await User.findOne({_id: user._id})
-                //     .populate('userDetail')
-                //     .exec()
                 return done(null, user, {message: ''})
             } catch (error) {
                 return done(error, null, {message: 'Unknown Error!'})

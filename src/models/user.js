@@ -18,11 +18,9 @@ const userSchema = new mongoose.Schema(
             minlength: 8,
             validate(value) {
                 if (value.length < 8) {
-                    throw new Error(
-                        'Passwords must be at least 8 characters in length'
-                    )
+                    throw new Error('Passwords must be at least 8 characters in length')
                 }
-            }
+            },
         },
         email: {
             type: String,
@@ -31,15 +29,17 @@ const userSchema = new mongoose.Schema(
                 if (!validator.isEmail(value)) {
                     throw new Error('Email is invalid')
                 }
-            }
+            },
         },
         userDetail: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'userDetail'
-        }
+            ref: 'userDetail',
+        },
     },
     {timestamps: true}
 )
+
+const User = mongoose.model('User', userSchema)
 
 userSchema.methods.toJSON = function() {
     const user = this
@@ -61,7 +61,7 @@ userSchema.methods.isValidPassword = async function(password) {
 userSchema.methods.generateToken = async function() {
     const user = this
     const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET, {
-        expiresIn: '1d'
+        expiresIn: '1d',
     })
 
     return token
@@ -89,7 +89,5 @@ userSchema.pre('save', async function(next) {
     }
     next()
 })
-
-const User = mongoose.model('User', userSchema)
 
 module.exports = User

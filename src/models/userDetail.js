@@ -4,17 +4,17 @@ require('dotenv').config()
 const userDetailSchema = new mongoose.Schema(
     {
         googleID: {
-            type: String
+            type: String,
         },
         displayName: {
-            type: String
+            type: String,
         },
         givenName: {
-            type: String
+            type: String,
         },
         picture: {
-            type: String
-        }
+            type: String,
+        },
     },
     {timestamps: true}
 )
